@@ -97,6 +97,8 @@ class Run:
 		self._startedTime = False
 		self._lastTime = 0
 
+		self._checkedPred = "None"
+
 	def verif(self, array):
 		for num in array:
 			for numb in array:
@@ -163,6 +165,7 @@ class Run:
 						self._time['start'] = time.perf_counter()
 
 			if self.verif(self._prev_preds):
+				self._checkedPred = self._prev_preds[0]
 				if not(self._endAction):
 					if self._prev_preds[0] == 'Fail' or self._forcePath == 'Fail':
 						if self._c < len(self._orderFail):
@@ -177,7 +180,7 @@ class Run:
 							self._startedTime = False
 							self._time['stop'] = time.perf_counter()
 							self._lastTime = self._time['last']
-							self._time['last'] = self._time['stop'] - self._time['start'] - 4
+							self._time['last'] = "{0:.2f}".format(self._time['stop'] - self._time['start'] - 4)
 
 						if self._c < len(self._orderSuccess):
 							if self._c == 3:

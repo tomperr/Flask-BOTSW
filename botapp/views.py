@@ -25,7 +25,7 @@ def grand_parent_labeler(self, o):
 
 path = Path('D:/Dev/Python/final2.pkl') # Path to get the Ml model
 imagePath = Path('./Patch/') # Path to get images
-frameRateNonAnalysis = 20 # Programm will analyse 1 frame of 20
+frameRateNonAnalysis = 10 # Programm will analyse 1 frame of 10
 bounding_box = {'top': 0, 'left': 0, 'width': 1800, 'height': 1200} # Screen configuration | if you are using a second screen modify this value
 averageMouseDeplacement = 1 # Allows the programm to move the mouse | time in second
 averageWaitingTime = 1 # Allows the programm to wait in order to net get ban
@@ -46,6 +46,13 @@ saved_timer = 0
 @app.route('/index/')
 def index():
     return render_template('index.html')
+
+@app.route('/settings')
+@app.route('/settings/')
+def settings():
+    return render_template('settings.html')
+
+
 
 def my_function():
 	global stop_run
@@ -75,16 +82,6 @@ def run_process():
 	stop_run = False
 	return Response(manual_run(), mimetype="text/html")
 
-@app.route('/', methods=['POST'])
-def startAstop():
-	global stop_run
-	if 'start' in request.form:
-		stop_run = False
-		return Response(manual_run(), mimetype="text/html")
-	elif 'stop' in request.form:
-		stop_run = True
-		return render_template("index.html")
-
 @app.route('/ajax', methods = ['GET'])
 def temp():
 	global stop_run
@@ -96,17 +93,32 @@ def temp():
 
 	send = {
 		"state" : appState,
-		"nbvictory" : actual_run._nbVictory
+		"nbvictory" : actual_run._nbVictory,
+		"nbruns" : actual_run._nbRun 
 	}
 
+	if actual_run._nbRun != 0:
+		send['winRate'] = str("{0:.2f}".format(100*(actual_run._nbRun/actual_run._nbVictory))) + "%"
+
 	if actual_run._lastTime != actual_run._time['last'] and actual_run._time['last'] != saved_timer:
-		send['timer'] = "{0:.2f}".format(actual_run._time['last'])
+		send['timer'] = actual_run._time['last']
 		saved_timer = send['timer']
 
-	if actual_run._prev_preds and len(actual_run._prev_preds) > 4:
-		send["stage"] = actual_run._prev_preds[0]
+	if actual_run._checkedPred:
+		send["stage"] = actual_run._checkedPred
 
 	return send
 
+@app.route('/ajax/settings', methods = ['GET'])
+def getSettings():
+	global actual_run
+	send = {
+		"frameRateNonAnalysis": actual_run._frameRateNonAnalysis,
+		"bounding_box": actual_run._bounding_box,
+		"Refill": actual_run._Refill,
+		"TypeName": actual_run._TypeName
+	}
+	return send
+	
 if __name__ == "__main__":
     app.run()
