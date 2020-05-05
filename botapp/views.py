@@ -23,7 +23,7 @@ def grand_parent_labeler(self, o):
 	"Label `item` with the parent folder name."
 	return Path(o).parent.name
 
-path = Path('D:/Dev/Python/final2.pkl') # Path to get the Ml model
+path = Path('F:/Dev/Python/final2.pkl') # Path to get the Ml model
 imagePath = Path('./Patch/') # Path to get images
 frameRateNonAnalysis = 10 # Programm will analyse 1 frame of 10
 bounding_box = {'top': 0, 'left': 0, 'width': 1800, 'height': 1200} # Screen configuration | if you are using a second screen modify this value
@@ -114,11 +114,19 @@ def getSettings():
 	global actual_run
 	send = {
 		"frameRateNonAnalysis": actual_run._frameRateNonAnalysis,
-		"bounding_box": actual_run._bounding_box,
 		"Refill": actual_run._Refill,
 		"TypeName": actual_run._TypeName
 	}
 	return send
+
+@app.route('/settings/', methods = ['POST'])
+@app.route('/settings', methods = ['POST'])
+def setSettings():
+	global actual_run
+	for rProperty in request.form:
+		setattr(actual_run, '_' + rProperty, request.form[rProperty])
+	print(actual_run._frameRateNonAnalysis)
+	return render_template('settings.html')
 	
 if __name__ == "__main__":
     app.run()
