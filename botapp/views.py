@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, Response
 from multiprocessing import Process, Value
 from threading import Thread
 from time import sleep
-from models import bot
+from botapp.models import bot
 
 import numpy as np
 import cv2

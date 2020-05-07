@@ -1,0 +1,12 @@
+./venv/
+./.idea/
+
+# pycache
+./botapp/__pycache__/
+./botapp/models/__pycache__/
+
+# this one should be enough, but i don't trust SO
+__pycache__/
+
+# compiled files
+*.pyc
